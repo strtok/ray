@@ -1,0 +1,9 @@
+[package]
+name = "ray"
+version = "0.1.0"
+authors = ["Erik Bremen <strtok@strtok.net>"]
+
+[dependencies]
+log = "*"
+piston_window = "0.70.0"
+pretty_env_logger="*"
