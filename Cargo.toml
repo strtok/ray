@@ -5,5 +5,7 @@ authors = ["Erik Bremen <strtok@strtok.net>"]
 
 [dependencies]
 log = "*"
-piston_window = "0.70.0"
+piston_window = "*"
+image = "*"
 pretty_env_logger="*"
+
