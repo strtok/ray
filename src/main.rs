@@ -24,10 +24,10 @@ fn main() {
         &TextureSettings::new()
     ).unwrap();
 
-    for y in (0..height-1).rev() {
+    for y in 0..height-1 {
         for x in 0..width-1 {
             let r: f32 = x as f32 / width as f32;
-            let g: f32 = y as f32 / height as f32;
+            let g: f32 = 1.0 - (y as f32 / height as f32);
             let b: f32 = 0.2;
             let ir = (255.99 as f32 * r) as u8;
             let ig = (255.99 as f32 * g) as u8;
