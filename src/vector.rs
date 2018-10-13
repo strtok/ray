@@ -1,3 +1,5 @@
+use core::fmt;
+
 pub struct Vector {
     x: f32,
     y: f32,
@@ -5,16 +7,22 @@ pub struct Vector {
 }
 
 impl Vector {
-    fn new(x: f32, y: f32, z: f32) -> Vector {
+    pub fn new(x: f32, y: f32, z: f32) -> Vector {
         Vector{x, y, z }
     }
 
-    fn length(&self) -> f32 {
+    pub fn length(&self) -> f32 {
         (self.x*self.x + self.y*self.y + self.z*self.z).sqrt()
     }
 
-    fn squared_length(&self) -> f32 {
+    pub fn squared_length(&self) -> f32 {
         self.x*self.x + self.y*self.y + self.z*self.z
+    }
+}
+
+impl fmt::Debug for Vector {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "Vector {{ x: {}, y: {}, z: {} }}", self.x, self.y, self.z)
     }
 }
 

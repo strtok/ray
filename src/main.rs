@@ -2,10 +2,12 @@ extern crate piston_window;
 extern crate image as im;
 extern crate pretty_env_logger;
 #[macro_use] extern crate log;
+extern crate core;
 
 mod vector;
 
 use piston_window::*;
+use vector::Vector;
 
 fn main() {
     pretty_env_logger::init();
