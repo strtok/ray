@@ -18,8 +18,8 @@ impl Vector {
 mod tests {
     use vector::*;
     #[test]
-    fn another() {
+    fn length() {
         let v = Vector {x: 1.0, y: 1.0, z: 1.0};
-        assert_eq!(v.length(), 1.0);
+        assert!(v.length() > 1.0);
     }
 }
