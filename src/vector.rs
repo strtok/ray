@@ -6,15 +6,15 @@ pub struct Vector {
 
 impl Vector {
     fn new(x: f32, y: f32, z: f32) -> Vector {
-        return Vector{x: x, y: y, z: z};
+        Vector{x, y, z }
     }
 
     fn length(&self) -> f32 {
-        return (self.x*self.x + self.y*self.y + self.z*self.z).sqrt();
+        (self.x*self.x + self.y*self.y + self.z*self.z).sqrt()
     }
 
     fn squared_length(&self) -> f32 {
-        return self.x*self.x + self.y*self.y + self.z*self.z;
+        self.x*self.x + self.y*self.y + self.z*self.z
     }
 }
 
