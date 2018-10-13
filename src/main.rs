@@ -9,6 +9,7 @@ use piston_window::*;
 
 fn main() {
     pretty_env_logger::init();
+    debug!("starting.");
 
     let opengl = OpenGL::V3_2;
     let (width, height) = (640, 480);

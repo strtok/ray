@@ -5,7 +5,7 @@ pub struct Vector {
 }
 
 impl Vector {
-    fn from(x: f32, y: f32, z: f32) -> Vector {
+    fn new(x: f32, y: f32, z: f32) -> Vector {
         return Vector{x: x, y: y, z: z};
     }
 
@@ -23,7 +23,7 @@ mod tests {
     use vector::*;
     #[test]
     fn length() {
-        let v = Vector::from(1.0, 1.0, 1.0);
+        let v = Vector::new(1.0, 1.0, 1.0);
         assert!(v.length() > 1.0);
     }
 }
