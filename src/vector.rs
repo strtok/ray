@@ -6,9 +6,11 @@ pub struct Vector {
 
 impl Vector {
     fn length(&self) -> f32 {
-        return (self.x*self.x +
-                self.y*self.y +
-                self.z*self.z).sqrt();
+        return (self.x*self.x + self.y*self.y + self.z*self.z).sqrt();
+    }
+
+    fn squared_length(&self) -> f32 {
+        return self.x*self.x + self.y*self.y + self.z*self.z;
     }
 }
 
