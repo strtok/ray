@@ -170,4 +170,34 @@ mod tests {
         assert_abs_diff_eq!((v/5.0).y, 2.0);
         assert_abs_diff_eq!((v/5.0).z, 2.0);
     }
+
+    #[test]
+    fn cross_product() {
+        let v1 = Vector::new(4.0, 5.0, 5.0);
+        let v2 = Vector::new(-5.0, -5.0, -5.0);
+        let v3 = v1.cross(&v2);
+        assert_abs_diff_eq!(v3.x, 0.0);
+        assert_abs_diff_eq!(v3.y, -5.0);
+        assert_abs_diff_eq!(v3.z, 5.0);
+    }
+
+    #[test]
+    fn squared_length() {
+        let v1 = Vector::new(10.0, 10.0, 10.0);
+        let length = v1.squared_length();
+        assert_abs_diff_eq!(length, 300.0);
+    }
+
+    #[test]
+    fn unit() {
+        let v1 = Vector::new(10.0, 10.0, 10.0);
+        assert_abs_diff_eq!(v1.unit().length(), 1.0);
+    }
+
+    #[test]
+    fn dot() {
+        let v1 = Vector::new(10.0, 10.0, 10.0);
+        let v2 = Vector::new(20.0, 20.0, 20.0);
+        assert_abs_diff_eq!(v1.dot(&v2), 600.0);
+    }
 }
