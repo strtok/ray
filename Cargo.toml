@@ -8,4 +8,4 @@ log = "*"
 piston_window = "*"
 image = "*"
 pretty_env_logger="*"
-
+approx = "0.3.0"

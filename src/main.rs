@@ -1,8 +1,9 @@
 extern crate piston_window;
 extern crate image as im;
 extern crate pretty_env_logger;
-#[macro_use] extern crate log;
 extern crate core;
+#[macro_use] extern crate log;
+#[macro_use] extern crate approx;
 
 mod vector;
 

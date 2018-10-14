@@ -135,6 +135,39 @@ mod tests {
     #[test]
     fn length() {
         let v = Vector::new(1.0, 1.0, 1.0);
-        assert!(v.length() > 1.0);
+        assert_abs_diff_eq!(v.length(), 1.7320508);
+    }
+
+    #[test]
+    fn add() {
+        let v = Vector::new(5.0, 5.0, 5.0);
+        assert_abs_diff_eq!((v+v).x, 10.0);
+        assert_abs_diff_eq!((v+v).y, 10.0);
+        assert_abs_diff_eq!((v+v).z, 10.0);
+        assert_abs_diff_eq!((v+10.0).x, 15.0);
+        assert_abs_diff_eq!((v+10.0).y, 15.0);
+        assert_abs_diff_eq!((v+10.0).z, 15.0);
+    }
+
+    #[test]
+    fn mul() {
+        let v = Vector::new(5.0, 5.0, 5.0);
+        assert_abs_diff_eq!((v*v).x, 25.0);
+        assert_abs_diff_eq!((v*v).y, 25.0);
+        assert_abs_diff_eq!((v*v).z, 25.0);
+        assert_abs_diff_eq!((v*10.0).x, 50.0);
+        assert_abs_diff_eq!((v*10.0).y, 50.0);
+        assert_abs_diff_eq!((v*10.0).z, 50.0);
+    }
+
+    #[test]
+    fn div() {
+        let v = Vector::new(10.0, 10.0, 10.0);
+        assert_abs_diff_eq!((v/v).x, 1.0);
+        assert_abs_diff_eq!((v/v).y, 1.0);
+        assert_abs_diff_eq!((v/v).z, 1.0);
+        assert_abs_diff_eq!((v/5.0).x, 2.0);
+        assert_abs_diff_eq!((v/5.0).y, 2.0);
+        assert_abs_diff_eq!((v/5.0).z, 2.0);
     }
 }
