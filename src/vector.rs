@@ -4,6 +4,7 @@ use std::ops::Sub;
 use std::ops::Mul;
 use std::ops::Div;
 
+#[derive(Copy, Clone)]
 pub struct Vector {
     x: f32,
     y: f32,
@@ -21,13 +22,13 @@ impl Vector {
     }
 
     pub fn dot(&self, other: &Vector) -> f32 {
-        self.x*other.x, self.y*other.y, self.z*other.z
+        self.x*other.x + self.y*other.y + self.z*other.z
     }
 
     pub fn cross(&self, other: &Vector) -> Vector {
-        Vector::new((self.y*other.z - self.z*other.y),
-                    (self.z*other.x - self.x*other.z),
-                    (self.x*other.y - self.y*other.x))
+        Vector::new(self.y*other.z - self.z*other.y,
+                    self.z*other.x - self.x*other.z,
+                    self.x*other.y - self.y*other.x)
     }
 
     pub fn length(&self) -> f32 {
@@ -45,6 +46,7 @@ impl fmt::Debug for Vector {
     }
 }
 
+
 impl Add for Vector {
     type Output = Vector;
     fn add(self, other: Vector) -> Vector {
@@ -55,6 +57,18 @@ impl Add for Vector {
         }
     }
 }
+
+impl Add<f32> for Vector {
+    type Output = Vector;
+    fn add(self, other: f32) -> Vector {
+        Vector {
+            x: self.x + other,
+            y: self.y + other,
+            z: self.z + other
+        }
+    }
+}
+
 
 impl Sub for Vector {
     type Output = Vector;
@@ -79,6 +93,19 @@ impl Mul for Vector {
     }
 }
 
+
+impl Mul<f32> for Vector {
+    type Output = Vector;
+
+    fn mul(self, other: f32) -> Vector {
+        Vector {
+            x: self.x * other,
+            y: self.y * other,
+            z: self.z * other
+        }
+    }
+}
+
 impl Div for Vector {
     type Output = Vector;
     fn div(self, other: Vector) -> Vector {
@@ -90,6 +117,17 @@ impl Div for Vector {
     }
 }
 
+
+impl Div <f32>for Vector {
+    type Output = Vector;
+    fn div(self, other: f32) -> Vector {
+        Vector {
+            x: self.x / other,
+            y: self.y / other,
+            z: self.z / other
+        }
+    }
+}
 
 #[cfg(test)]
 mod tests {
