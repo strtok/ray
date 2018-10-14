@@ -1,4 +1,8 @@
 use core::fmt;
+use std::ops::Add;
+use std::ops::Sub;
+use std::ops::Mul;
+use std::ops::Div;
 
 pub struct Vector {
     x: f32,
@@ -9,6 +13,21 @@ pub struct Vector {
 impl Vector {
     pub fn new(x: f32, y: f32, z: f32) -> Vector {
         Vector{x, y, z }
+    }
+
+    pub fn unit(&self) -> Vector {
+        let k = 1.0 / (self.x * self.x + self.y * self.y + self.z * self.z).sqrt();
+        Vector::new(k*self.x, k*self.y, k*self.z)
+    }
+
+    pub fn dot(&self, other: &Vector) -> f32 {
+        self.x*other.x, self.y*other.y, self.z*other.z
+    }
+
+    pub fn cross(&self, other: &Vector) -> Vector {
+        Vector::new((self.y*other.z - self.z*other.y),
+                    (self.z*other.x - self.x*other.z),
+                    (self.x*other.y - self.y*other.x))
     }
 
     pub fn length(&self) -> f32 {
@@ -25,6 +44,52 @@ impl fmt::Debug for Vector {
         write!(f, "Vector {{ x: {}, y: {}, z: {} }}", self.x, self.y, self.z)
     }
 }
+
+impl Add for Vector {
+    type Output = Vector;
+    fn add(self, other: Vector) -> Vector {
+        Vector {
+            x: self.x + other.x,
+            y: self.y + other.y,
+            z: self.z + other.z
+        }
+    }
+}
+
+impl Sub for Vector {
+    type Output = Vector;
+    fn sub(self, other: Vector) -> Vector {
+        Vector {
+            x: self.x - other.x,
+            y: self.y - other.y,
+            z: self.z - other.z
+        }
+    }
+}
+
+impl Mul for Vector {
+    type Output = Vector;
+
+    fn mul(self, other: Vector) -> Vector {
+        Vector {
+            x: self.x * other.x,
+            y: self.y * other.y,
+            z: self.z * other.z
+        }
+    }
+}
+
+impl Div for Vector {
+    type Output = Vector;
+    fn div(self, other: Vector) -> Vector {
+        Vector {
+            x: self.x / other.x,
+            y: self.y / other.y,
+            z: self.z / other.z
+        }
+    }
+}
+
 
 #[cfg(test)]
 mod tests {
