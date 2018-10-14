@@ -12,7 +12,7 @@ pub struct Rgb {
 }
 
 impl Rgb {
-    pub fn new(r: f32, g: f32, b: f32) -> Vector {
+    pub fn new(r: f32, g: f32, b: f32) -> Rgb {
         Rgb{r, g, b}
     }
 }
