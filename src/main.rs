@@ -7,9 +7,11 @@ extern crate core;
 #[macro_use] extern crate approx;
 
 mod vector;
+mod ray;
 
 use piston_window::*;
 use vector::Vector;
+use ray::Ray;
 use image::ImageBuffer;
 
 fn raytrace<T>(canvas: &mut T)
@@ -17,15 +19,18 @@ fn raytrace<T>(canvas: &mut T)
 {
     let height = canvas.height();
     let width = canvas.width();
-    for y in 0..height-1 {
-        for x in 0..width-1 {
-            let r: f32 = x as f32 / width as f32;
-            let g: f32 = 1.0 - (y as f32 / height as f32);
-            let b: f32 = 0.2;
-            let ir = (255.99 as f32 * r) as u8;
-            let ig = (255.99 as f32 * g) as u8;
-            let ib = (255.99 as f32 * b) as u8;
-            canvas.put_pixel(x, y, image::Rgba([ir, ig, ib, 255]));
+
+    let camera_origin = Vector::new(0.0, 0.0, 0.0);
+    let viewport_origin = Vector::new(-2.0, -1.0, -1.0);
+    let viewport_width = Vector::new(4.0, 0.0, 0.0);
+    let viewport_height = Vector::new(0.0, 2.0, 0.0);
+
+    for y in (0..height).rev() {
+        for x in 0..width {
+            let xp = x as f32 / width as f32;
+            let yp = y as f32 / height as f32;
+            let ray = Ray::new(camera_origin, viewport_origin + viewport_width*xp + viewport_height*yp);
+            debug!("{},{} ({}. {}) -> {:?}", x, y, xp, yp, ray);
         }
     }
 }
@@ -35,7 +40,7 @@ fn main() {
     debug!("starting.");
 
     let opengl = OpenGL::V3_2;
-    let (width, height) = (640, 480);
+    let (width, height) = (200, 100);
     let mut window: PistonWindow =
         WindowSettings::new("piston: paint", (width, height))
             .exit_on_esc(true)
