@@ -3,8 +3,8 @@ use vector::*;
 
 #[derive(Copy, Clone)]
 pub struct Ray {
-    origin: Vector,
-    direction: Vector
+    pub origin: Vector,
+    pub direction: Vector
 }
 
 impl Ray {
@@ -21,3 +21,4 @@ impl fmt::Debug for Ray {
         write!(f, "Ray {{ origin: {:?}, direction: {:?}}}", self.origin, self.direction)
     }
 }
+

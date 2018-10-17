@@ -6,9 +6,9 @@ use std::ops::Div;
 
 #[derive(Copy, Clone)]
 pub struct Rgb {
-    r: f32,
-    g: f32,
-    b: f32
+    pub r: f32,
+    pub g: f32,
+    pub b: f32
 }
 
 impl Rgb {
@@ -17,8 +17,90 @@ impl Rgb {
     }
 }
 
-impl fmt::Debug for Vector {
+impl fmt::Debug for Rgb {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "Rgb {{ r: {}, g: {}, b: {} }}", self.r, self.g, self.b)
+    }
+}
+
+impl Add for Rgb {
+    type Output = Rgb;
+    fn add(self, other: Rgb) -> Rgb {
+        Rgb {
+            r: self.r + other.r,
+            g: self.g + other.g,
+            b: self.b + other.b
+        }
+    }
+}
+
+impl Add<f32> for Rgb {
+    type Output = Rgb;
+    fn add(self, other: f32) -> Rgb {
+        Rgb {
+            r: self.r + other,
+            g: self.g + other,
+            b: self.b + other
+        }
+    }
+}
+
+
+impl Sub for Rgb {
+    type Output = Rgb;
+    fn sub(self, other: Rgb) -> Rgb {
+        Rgb {
+            r: self.r - other.r,
+            g: self.g - other.g,
+            b: self.b - other.b
+        }
+    }
+}
+
+impl Mul for Rgb {
+    type Output = Rgb;
+
+    fn mul(self, other: Rgb) -> Rgb {
+        Rgb {
+            r: self.r * other.r,
+            g: self.g * other.g,
+            b: self.b * other.b
+        }
+    }
+}
+
+
+impl Mul<f32> for Rgb {
+    type Output = Rgb;
+
+    fn mul(self, other: f32) -> Rgb {
+        Rgb {
+            r: self.r * other,
+            g: self.g * other,
+            b: self.b * other
+        }
+    }
+}
+
+impl Div for Rgb {
+    type Output = Rgb;
+    fn div(self, other: Rgb) -> Rgb {
+        Rgb {
+            r: self.r / other.r,
+            g: self.g / other.g,
+            b: self.b / other.b
+        }
+    }
+}
+
+
+impl Div <f32>for Rgb {
+    type Output = Rgb;
+    fn div(self, other: f32) -> Rgb {
+        Rgb {
+            r: self.r / other,
+            g: self.g / other,
+            b: self.b / other
+        }
     }
 }
