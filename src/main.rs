@@ -17,7 +17,7 @@ use rgb::Rgb;
 use image::ImageBuffer;
 
 fn background(ray: &Ray) -> Rgb {
-    let t = 1.0 - (0.5*(ray.direction.unit().y + 1.0));
+    let t = 0.5*(ray.direction.unit().y + 1.0);
     return
         (Rgb::new(1.0,1.0,1.0) * (1.0-t) + Rgb::new(0.5, 0.7, 1.0)*t)
     *   (Rgb::new(255.99, 255.99, 255.99));
@@ -40,7 +40,7 @@ fn raytrace<T>(canvas: &mut T)
             let yp = y as f32 / height as f32;
             let ray = Ray::new(camera_origin, viewport_origin + viewport_width*xp + viewport_height*yp);
             let color = background(&ray);
-            canvas.put_pixel(x, y, image::Rgba([(color.r) as u8, (color.g) as u8, (color.b) as u8, 255]));
+            canvas.put_pixel(x, height-y-1, image::Rgba([(color.r) as u8, (color.g) as u8, (color.b) as u8, 255]));
             //debug!("{},{} ({}. {}) -> {:?} -> {:?}", x, y, xp, yp, ray, color);
         }
     }
@@ -51,7 +51,7 @@ fn main() {
     debug!("starting.");
 
     let opengl = OpenGL::V3_2;
-    let (width, height) = (200, 100);
+    let (width, height) = (400, 200);
     let mut window: PistonWindow =
         WindowSettings::new("piston: paint", (width, height))
             .exit_on_esc(true)
