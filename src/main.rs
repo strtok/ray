@@ -16,6 +16,7 @@ use ray::Ray;
 use rgb::Rgb;
 use image::ImageBuffer;
 
+
 fn background(ray: &Ray) -> Rgb {
     let t = 0.5*(ray.direction.unit().y + 1.0);
     return
@@ -23,12 +24,9 @@ fn background(ray: &Ray) -> Rgb {
     *   (Rgb::new(255.99, 255.99, 255.99));
 }
 
-fn raytrace<T>(canvas: &mut T)
-    where T: image::GenericImage<Pixel=image::Rgba<u8>>
+fn raytrace<T>(height: u32, width: u32, put_pixel: &mut T)
+    where T: FnMut(u32, u32, f32, f32, f32)
 {
-    let height = canvas.height();
-    let width = canvas.width();
-
     let camera_origin = Vector::new(0.0, 0.0, 0.0);
     let viewport_origin = Vector::new(-2.0, -1.0, -1.0);
     let viewport_width = Vector::new(4.0, 0.0, 0.0);
@@ -40,7 +38,7 @@ fn raytrace<T>(canvas: &mut T)
             let yp = y as f32 / height as f32;
             let ray = Ray::new(camera_origin, viewport_origin + viewport_width*xp + viewport_height*yp);
             let color = background(&ray);
-            canvas.put_pixel(x, height-y-1, image::Rgba([(color.r) as u8, (color.g) as u8, (color.b) as u8, 255]));
+            put_pixel(x, height-y-1, color.r, color.g, color.b);
             //debug!("{},{} ({}. {}) -> {:?} -> {:?}", x, y, xp, yp, ray, color);
         }
     }
@@ -66,7 +64,9 @@ fn main() {
         &TextureSettings::new()
     ).unwrap();
 
-    raytrace(&mut canvas);
+    raytrace(canvas.height(), canvas.width(), &mut |x: u32, y: u32, r: f32, g: f32, b: f32| {
+        canvas.put_pixel(x, y, image::Rgba([r as u8, g as u8, b as u8, 255]));
+    });
 
     while let Some(e) = window.next() {
         if let Some(_) = e.render_args() {
