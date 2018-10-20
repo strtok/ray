@@ -24,7 +24,7 @@ fn background(ray: &Ray) -> Rgb {
     *   (Rgb::new(255.99, 255.99, 255.99));
 }
 
-fn raytrace<T>(height: u32, width: u32, put_pixel: &mut T)
+fn raycast<T>(height: u32, width: u32, put_pixel: &mut T)
     where T: FnMut(u32, u32, f32, f32, f32)
 {
     let camera_origin = Vector::new(0.0, 0.0, 0.0);
@@ -64,7 +64,7 @@ fn main() {
         &TextureSettings::new()
     ).unwrap();
 
-    raytrace(canvas.height(), canvas.width(), &mut |x: u32, y: u32, r: f32, g: f32, b: f32| {
+    raycast(canvas.height(), canvas.width(), &mut |x: u32, y: u32, r: f32, g: f32, b: f32| {
         canvas.put_pixel(x, y, image::Rgba([r as u8, g as u8, b as u8, 255]));
     });
 
