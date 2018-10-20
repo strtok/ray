@@ -51,7 +51,7 @@ fn main() {
     let opengl = OpenGL::V3_2;
     let (width, height) = (400, 200);
     let mut window: PistonWindow =
-        WindowSettings::new("piston: paint", (width, height))
+        WindowSettings::new("ray", (width, height))
             .exit_on_esc(true)
             .opengl(opengl)
             .build()
