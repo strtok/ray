@@ -64,7 +64,7 @@ fn main() {
         &TextureSettings::new()
     ).unwrap();
 
-    raycast(canvas.height(), canvas.width(), &mut |x: u32, y: u32, r: f32, g: f32, b: f32| {
+    raycast(canvas.height(), canvas.width(), &mut |x, y, r, g, b| {
         canvas.put_pixel(x, y, image::Rgba([r as u8, g as u8, b as u8, 255]));
     });
 
