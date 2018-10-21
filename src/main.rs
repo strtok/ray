@@ -9,15 +9,23 @@ extern crate core;
 mod vector;
 mod ray;
 mod rgb;
+mod sphere;
 
 use piston_window::*;
-use vector::Vector;
+use image::ImageBuffer;
 use ray::Ray;
 use rgb::Rgb;
-use image::ImageBuffer;
+use sphere::Sphere;
+use vector::Vector;
 
 
-fn background(ray: &Ray) -> Rgb {
+fn color(ray: &Ray) -> Rgb {
+    // sphere intersection
+    let sphere = Sphere::new(Vector::new(0.0,0.0,-1.0), 0.5);
+    if ray.intersects(&sphere) {
+        return Rgb::new(255.99, 0.0, 0.0);
+    }
+    // background color
     let t = 0.5*(ray.direction.unit().y + 1.0);
     return
         (Rgb::new(1.0,1.0,1.0) * (1.0-t) + Rgb::new(0.5, 0.7, 1.0)*t)
@@ -37,7 +45,7 @@ fn raycast<T>(height: u32, width: u32, put_pixel: &mut T)
             let xp = x as f32 / width as f32;
             let yp = y as f32 / height as f32;
             let ray = Ray::new(camera_origin, viewport_origin + viewport_width*xp + viewport_height*yp);
-            let color = background(&ray);
+            let color = color(&ray);
             put_pixel(x, height-y-1, color.r, color.g, color.b);
             //debug!("{},{} ({}. {}) -> {:?} -> {:?}", x, y, xp, yp, ray, color);
         }

@@ -14,6 +14,12 @@ impl Ray {
     pub fn point_at(&self, t: f32) -> Vector {
         return self.origin + self.direction*t;
     }
+
+    pub fn intersects<T>(&self, obj: &T) -> bool
+        where T: RayIntersect
+    {
+        return obj.intersects(&self);
+    }
 }
 
 impl fmt::Debug for Ray {
@@ -22,3 +28,6 @@ impl fmt::Debug for Ray {
     }
 }
 
+pub trait RayIntersect {
+    fn intersects(&self, ray: &Ray) -> bool;
+}
