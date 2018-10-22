@@ -2,6 +2,7 @@ extern crate piston_window;
 extern crate image;
 extern crate pretty_env_logger;
 extern crate core;
+extern crate rand;
 
 #[macro_use] extern crate log;
 #[macro_use] extern crate approx;
@@ -16,6 +17,7 @@ mod vector;
 use camera::Camera;
 use image::ImageBuffer;
 use piston_window::*;
+use rand::prelude::*;
 use ray::Ray;
 use rgb::Rgb;
 use scene::*;
@@ -52,14 +54,19 @@ fn render<T>(height: u32, width: u32, scene: &Scene, put_pixel: &mut T)
     where T: FnMut(u32, u32, f32, f32, f32)
 {
     let camera = Camera::new();
+    let nsamples = 25;
 
     for yp in 0..height {
         for xp in 0..width {
-            let u = xp as f32 / width as f32;
-            let v = yp as f32 / height as f32;
-            let ray = camera.ray(u, v);
-            let color = raycast(&ray, &scene);
-            put_pixel(xp, height-yp-1, color.r, color.g, color.b);
+            let mut color = Rgb::new(0.0, 0.0, 0.0);
+            for sample in 0..nsamples {
+                let u = (xp as f32 + random::<f32>()) / width as f32;
+                let v = (yp as f32 + random::<f32>()) / height as f32;
+                let ray = camera.ray(u, v);
+                color = color + raycast(&ray, &scene);
+            }
+            color = color / nsamples as f32;
+            put_pixel(xp, height - yp - 1, color.r, color.g, color.b);
         }
     }
 }
