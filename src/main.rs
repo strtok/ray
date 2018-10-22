@@ -18,21 +18,24 @@ use ray::Ray;
 use rgb::Rgb;
 use scene::*;
 use sphere::Sphere;
+use std::cmp::Ordering;
 use std::f32;
 use vector::Vector;
 
 fn raycast(ray: &Ray, scene: &Scene) -> Rgb {
 
-    for it in &scene.objects {
-        match it {
+    if let Some(intersection) = scene.objects.iter().filter_map(|obj| {
+        match obj {
             Object::Sphere(sphere) => {
-                if let Some(intersection) = ray.intersects(sphere, (0.0, f32::MAX)) {
-                    let normal = (intersection.normal + Vector::new(1.0,1.0,1.0)) * 0.5;
-                    let rgb = Rgb::new(normal.x*255.0, normal.y*255.0, normal.z*255.0);
-                    return rgb;
-                }
+                return ray.intersects(sphere, (0.0, f32::MAX));
             }
         }
+    }).min_by(|r1, r2| {
+        r1.t.partial_cmp(&r2.t).unwrap()
+    }) {
+        let normal = (intersection.normal + Vector::new(1.0,1.0,1.0)) * 0.5;
+        let rgb = Rgb::new(normal.x*255.0, normal.y*255.0, normal.z*255.0);
+        return rgb;
     }
 
     // background color
@@ -57,7 +60,6 @@ fn render<T>(height: u32, width: u32, scene: &Scene, put_pixel: &mut T)
             let ray = Ray::new(camera_origin, viewport_origin + viewport_width*xp + viewport_height*yp);
             let color = raycast(&ray, &scene);
             put_pixel(x, height-y-1, color.r, color.g, color.b);
-            //debug!("{},{} ({}. {}) -> {:?} -> {:?}", x, y, xp, yp, ray, color);
         }
     }
 }
