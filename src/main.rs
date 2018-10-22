@@ -23,11 +23,13 @@ use std::f32;
 use vector::Vector;
 
 fn raycast(ray: &Ray, scene: &Scene) -> Rgb {
+    let bounds = (0.0, f32::MAX);
 
+    // Intersection with closest object
     if let Some(intersection) = scene.objects.iter().filter_map(|obj| {
         match obj {
             Object::Sphere(sphere) => {
-                return ray.intersects(sphere, (0.0, f32::MAX));
+                return ray.intersects(sphere, bounds);
             }
         }
     }).min_by(|r1, r2| {
@@ -38,7 +40,7 @@ fn raycast(ray: &Ray, scene: &Scene) -> Rgb {
         return rgb;
     }
 
-    // background color
+    // Otherwise background color
     let t = 0.5*(ray.direction.unit().y + 1.0);
     return
         (Rgb::new(1.0,1.0,1.0) * (1.0-t) + Rgb::new(0.5, 0.7, 1.0)*t)
