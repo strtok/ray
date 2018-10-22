@@ -29,7 +29,7 @@ fn raycast(ray: &Ray, scene: &Scene) -> Rgb {
     if let Some(intersection) = scene.objects.iter().filter_map(|obj| {
         match obj {
             Object::Sphere(sphere) => {
-                return ray.intersects(sphere, bounds);
+                ray.intersects(sphere, bounds)
             }
         }
     }).min_by(|r1, r2| {
