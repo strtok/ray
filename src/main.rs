@@ -6,19 +6,20 @@ extern crate core;
 #[macro_use] extern crate log;
 #[macro_use] extern crate approx;
 
-mod vector;
+mod camera;
 mod ray;
 mod rgb;
 mod scene;
 mod sphere;
+mod vector;
 
-use piston_window::*;
+use camera::Camera;
 use image::ImageBuffer;
+use piston_window::*;
 use ray::Ray;
 use rgb::Rgb;
 use scene::*;
 use sphere::Sphere;
-use std::cmp::Ordering;
 use std::f32;
 use vector::Vector;
 
@@ -50,18 +51,15 @@ fn raycast(ray: &Ray, scene: &Scene) -> Rgb {
 fn render<T>(height: u32, width: u32, scene: &Scene, put_pixel: &mut T)
     where T: FnMut(u32, u32, f32, f32, f32)
 {
-    let camera_origin = Vector::new(0.0, 0.0, 0.0);
-    let viewport_origin = Vector::new(-2.0, -1.0, -1.0);
-    let viewport_width = Vector::new(4.0, 0.0, 0.0);
-    let viewport_height = Vector::new(0.0, 2.0, 0.0);
+    let camera = Camera::new();
 
-    for y in 0..height {
-        for x in 0..width {
-            let xp = x as f32 / width as f32;
-            let yp = y as f32 / height as f32;
-            let ray = Ray::new(camera_origin, viewport_origin + viewport_width*xp + viewport_height*yp);
+    for yp in 0..height {
+        for xp in 0..width {
+            let u = xp as f32 / width as f32;
+            let v = yp as f32 / height as f32;
+            let ray = camera.ray(u, v);
             let color = raycast(&ray, &scene);
-            put_pixel(x, height-y-1, color.r, color.g, color.b);
+            put_pixel(xp, height-yp-1, color.r, color.g, color.b);
         }
     }
 }
