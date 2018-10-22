@@ -15,10 +15,10 @@ impl Ray {
         return self.origin + self.direction*t;
     }
 
-    pub fn intersects<T>(&self, obj: &T) -> Option<IntersectionResult>
+    pub fn intersects<T>(&self, obj: &T, bounds: (f32, f32)) -> Option<IntersectionResult>
         where T: RayIntersect
     {
-        return obj.intersects(&self);
+        return obj.intersects(&self, bounds);
     }
 }
 
@@ -34,5 +34,5 @@ pub struct IntersectionResult {
 }
 
 pub trait RayIntersect {
-    fn intersects(&self, ray: &Ray) -> Option<IntersectionResult>;
+    fn intersects(&self, ray: &Ray, bounds: (f32, f32)) -> Option<IntersectionResult>;
 }

@@ -17,20 +17,36 @@ impl Sphere {
 }
 
 impl RayIntersect for Sphere {
-    fn intersects(&self, ray: &Ray) -> Option<IntersectionResult> {
+    fn intersects(&self, ray: &Ray, bounds: (f32, f32)) -> Option<IntersectionResult> {
         let oc = ray.origin - self.center;
         let a = ray.direction.dot(&ray.direction);
         let b = 2.0 * (oc.dot(&ray.direction));
         let c = oc.dot(&oc) - self.radius*self.radius;
         let d = b*b - 4.0*a*c;
 
-        if d > 0.0 {
-            let t = (-b - d.sqrt()) / (2.0*a);
-            let normal = (ray.point_at(t) - self.center) / self.radius;
-            Some(IntersectionResult{t, normal})
-        } else {
-            None
+        let (tmin, tmax) = bounds;
+
+        if d < 0.0 {
+            return None;
         }
+
+        let mut t = (-b - (b*b - a*c).sqrt()) / a;
+        if t > tmin && t < tmax {
+            return Some(IntersectionResult {
+                t,
+                normal: (ray.point_at(t) - self.center) / self.radius
+            })
+        }
+
+        t = (-b + (b*b - a*c).sqrt()) / a;
+        if t > tmin && t < tmax {
+            return Some(IntersectionResult {
+                t,
+                normal: (ray.point_at(t) - self.center) / self.radius
+            })
+        }
+
+        return None;
     }
 }
 
