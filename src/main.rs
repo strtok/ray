@@ -22,14 +22,18 @@ use vector::Vector;
 fn color(ray: &Ray) -> Rgb {
     // sphere intersection
     let sphere = Sphere::new(Vector::new(0.0,0.0,-1.0), 0.5);
-    if ray.intersects(&sphere) {
-        return Rgb::new(255.99, 0.0, 0.0);
+
+    if let Some(intersection) = ray.intersects(&sphere) {
+        let normal = (intersection.normal + Vector::new(1.0,1.0,1.0)) * 0.5;
+        let rgb = Rgb::new(normal.x*255.0, normal.y*255.0, normal.z*255.0);
+        return rgb;
     }
+
     // background color
     let t = 0.5*(ray.direction.unit().y + 1.0);
     return
         (Rgb::new(1.0,1.0,1.0) * (1.0-t) + Rgb::new(0.5, 0.7, 1.0)*t)
-    *   (Rgb::new(255.99, 255.99, 255.99));
+    *   (Rgb::new(255.0, 255.0, 255.0));
 }
 
 fn raycast<T>(height: u32, width: u32, put_pixel: &mut T)

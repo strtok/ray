@@ -15,7 +15,7 @@ impl Ray {
         return self.origin + self.direction*t;
     }
 
-    pub fn intersects<T>(&self, obj: &T) -> bool
+    pub fn intersects<T>(&self, obj: &T) -> Option<IntersectionResult>
         where T: RayIntersect
     {
         return obj.intersects(&self);
@@ -28,6 +28,11 @@ impl fmt::Debug for Ray {
     }
 }
 
+pub struct IntersectionResult {
+    pub t: f32,
+    pub normal: Vector
+}
+
 pub trait RayIntersect {
-    fn intersects(&self, ray: &Ray) -> bool;
+    fn intersects(&self, ray: &Ray) -> Option<IntersectionResult>;
 }

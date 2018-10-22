@@ -1,8 +1,10 @@
 use core::fmt;
 use ray::Ray;
 use ray::RayIntersect;
+use ray::IntersectionResult;
 use vector::*;
 
+#[derive(Copy, Clone)]
 pub struct Sphere {
     pub center: Vector,
     pub radius: f32
@@ -15,13 +17,20 @@ impl Sphere {
 }
 
 impl RayIntersect for Sphere {
-    fn intersects(&self, ray: &Ray) -> bool {
+    fn intersects(&self, ray: &Ray) -> Option<IntersectionResult> {
         let oc = ray.origin - self.center;
         let a = ray.direction.dot(&ray.direction);
         let b = 2.0 * (oc.dot(&ray.direction));
         let c = oc.dot(&oc) - self.radius*self.radius;
         let d = b*b - 4.0*a*c;
-        return d > 0.0;
+
+        if d > 0.0 {
+            let t = (-b - d.sqrt()) / (2.0*a);
+            let normal = (ray.point_at(t) - self.center) / self.radius;
+            Some(IntersectionResult{t, normal})
+        } else {
+            None
+        }
     }
 }
 
