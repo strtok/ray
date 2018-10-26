@@ -30,6 +30,7 @@ impl fmt::Debug for Ray {
 
 pub struct IntersectionResult {
     pub t: f32,
+    pub point: Vector,
     pub normal: Vector
 }
 

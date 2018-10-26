@@ -34,6 +34,7 @@ impl RayIntersect for Sphere {
         if t > tmin && t < tmax {
             return Some(IntersectionResult {
                 t,
+                point: ray.point_at(t),
                 normal: (ray.point_at(t) - self.center) / self.radius
             })
         }
@@ -42,6 +43,7 @@ impl RayIntersect for Sphere {
         if t > tmin && t < tmax {
             return Some(IntersectionResult {
                 t,
+                point: ray.point_at(t),
                 normal: (ray.point_at(t) - self.center) / self.radius
             })
         }
