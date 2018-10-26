@@ -26,7 +26,7 @@ use std::f32;
 use vector::Vector;
 
 fn raycast(ray: &Ray, scene: &Scene) -> Rgb {
-    let bounds = (0.0, f32::MAX);
+    let bounds = (0.001, f32::MAX);
 
     // Intersection with closest object
     if let Some(intersection) = scene.objects.iter().filter_map(|obj| {
