@@ -44,9 +44,8 @@ fn raycast(ray: &Ray, scene: &Scene) -> Rgb {
 
     // Otherwise background color
     let t = 0.5*(ray.direction.unit().y + 1.0);
-    return
-        (Rgb::new(1.0,1.0,1.0) * (1.0-t) + Rgb::new(0.5, 0.7, 1.0)*t)
-    *   (Rgb::new(255.0, 255.0, 255.0));
+    let color = Rgb::new(1.0, 1.0, 1.0) * (1.0 - t) + Rgb::new(0.5, 0.7, 1.0)*t;
+    return Rgb::new(color.r.sqrt() * 255.0, color.g.sqrt() * 255.0, color.b.sqrt() * 255.0);
 }
 
 fn render<T>(height: u32, width: u32, scene: &Scene, put_pixel: &mut T)
@@ -75,7 +74,7 @@ fn main() {
     debug!("starting.");
 
     let opengl = OpenGL::V3_2;
-    let (width, height) = (400, 200);
+    let (width, height) = (1400, 700);
     let mut window: PistonWindow =
         WindowSettings::new("ray", (width, height))
             .exit_on_esc(true)
