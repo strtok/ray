@@ -1,4 +1,5 @@
 use core::fmt;
+use rand::prelude::*;
 use std::ops::Add;
 use std::ops::Sub;
 use std::ops::Mul;
@@ -14,6 +15,15 @@ pub struct Vector {
 impl Vector {
     pub fn new(x: f32, y: f32, z: f32) -> Vector {
         Vector{x, y, z }
+    }
+
+    pub fn random_unit() -> Vector {
+        loop {
+            let v = Vector::new(random::<f32>(), random::<f32>(), random::<f32>())*2.0 - Vector::new(1.0, 1.0, 1.0);
+            if v.squared_length() >= 1.0 {
+                return v;
+            }
+        }
     }
 
     pub fn unit(&self) -> Vector {

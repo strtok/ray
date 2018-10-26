@@ -38,9 +38,8 @@ fn raycast(ray: &Ray, scene: &Scene) -> Rgb {
     }).min_by(|r1, r2| {
         r1.t.partial_cmp(&r2.t).unwrap()
     }) {
-        let normal = (intersection.normal + Vector::new(1.0,1.0,1.0)) * 0.5;
-        let rgb = Rgb::new(normal.x*255.0, normal.y*255.0, normal.z*255.0);
-        return rgb;
+        let target = intersection.point + intersection.normal + Vector::random_unit();
+        return raycast(&Ray::new(intersection.point, target-intersection.point), scene) * 0.5;
     }
 
     // Otherwise background color
