@@ -49,8 +49,9 @@ fn raycast(ray: &Ray, scene: &Scene) -> Rgb {
     return Rgb::new(color.r.sqrt() * 255.0, color.g.sqrt() * 255.0, color.b.sqrt() * 255.0);
 }
 
-fn render(width: u32, height: u32, scene: Arc<Scene>, buffer: &mut Vec<Rgb>)
+fn render(width: u32, height: u32, scene: Arc<Scene>) -> Vec<Rgb>
 {
+    let mut buffer = vec![Rgb::new(0.0, 0.0, 0.0); (width * height) as usize];
     let camera = Camera::new();
     let nsamples = 25;
 
@@ -68,6 +69,8 @@ fn render(width: u32, height: u32, scene: Arc<Scene>, buffer: &mut Vec<Rgb>)
             buffer[i as usize] = color;
         }
     }
+
+    buffer
 }
 
 fn main() {
@@ -90,8 +93,7 @@ fn main() {
         ]
     });
 
-    let mut buffer = vec![Rgb::new(0.0, 0.0, 0.0); (width * height) as usize];
-    render(width, height, scene, &mut buffer);
+    let buffer = render(width, height, scene);
 
     let mut canvas = ImageBuffer::new(width, height);
     for (i, it) in buffer.iter().enumerate() {
