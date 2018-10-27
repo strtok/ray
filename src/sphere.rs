@@ -2,6 +2,7 @@ use core::fmt;
 use ray::Ray;
 use ray::RayIntersect;
 use ray::IntersectionResult;
+use std::f32;
 use vector::*;
 
 #[derive(Copy, Clone)]
@@ -69,6 +70,6 @@ mod tests {
         let s = Sphere::new(Vector::new(0.0,0.0,-1.0), 0.5);
         let r = Ray::new(Vector::new(0.0,0.0,0.0),
                             Vector::new(0.0,0.0,-1.0));
-        assert!(r.intersects(&s));
+        assert!(r.intersects(&s, (0.001, f32::MAX)).is_some());
     }
 }

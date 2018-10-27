@@ -23,6 +23,7 @@ use rgb::Rgb;
 use scene::*;
 use sphere::Sphere;
 use std::f32;
+use std::sync::Arc;
 use vector::Vector;
 
 fn raycast(ray: &Ray, scene: &Scene) -> Rgb {
@@ -48,7 +49,7 @@ fn raycast(ray: &Ray, scene: &Scene) -> Rgb {
     return Rgb::new(color.r.sqrt() * 255.0, color.g.sqrt() * 255.0, color.b.sqrt() * 255.0);
 }
 
-fn render(width: u32, height: u32, scene: &Scene, buffer: &mut Vec<Rgb>)
+fn render(width: u32, height: u32, scene: Arc<Scene>, buffer: &mut Vec<Rgb>)
 {
     let camera = Camera::new();
     let nsamples = 25;
@@ -82,15 +83,15 @@ fn main() {
             .build()
             .unwrap();
 
-    let scene = Scene {
+    let scene = Arc::new(Scene {
         objects: vec![
             Object::Sphere(Sphere::new(Vector::new(0.0, 0.0, -1.0), 0.5)),
             Object::Sphere(Sphere::new(Vector::new(0.0, -100.5, -1.0), 100.00))
         ]
-    };
+    });
 
     let mut buffer = vec![Rgb::new(0.0, 0.0, 0.0); (width * height) as usize];
-    render(width, height, &scene, &mut buffer);
+    render(width, height, scene, &mut buffer);
 
     let mut canvas = ImageBuffer::new(width, height);
     for (i, it) in buffer.iter().enumerate() {
