@@ -48,8 +48,7 @@ fn raycast(ray: &Ray, scene: &Scene) -> Rgb {
     return Rgb::new(color.r.sqrt() * 255.0, color.g.sqrt() * 255.0, color.b.sqrt() * 255.0);
 }
 
-fn render<T>(height: u32, width: u32, scene: &Scene, put_pixel: &mut T)
-    where T: FnMut(u32, u32, f32, f32, f32)
+fn render(width: u32, height: u32, scene: &Scene, buffer: &mut Vec<Rgb>)
 {
     let camera = Camera::new();
     let nsamples = 25;
@@ -64,7 +63,8 @@ fn render<T>(height: u32, width: u32, scene: &Scene, put_pixel: &mut T)
                 color = color + raycast(&ray, &scene);
             }
             color = color / nsamples as f32;
-            put_pixel(xp, height - yp - 1, color.r, color.g, color.b);
+            let i = ((height - yp - 1) * width) + xp;
+            buffer[i as usize] = color;
         }
     }
 }
@@ -74,7 +74,7 @@ fn main() {
     debug!("starting.");
 
     let opengl = OpenGL::V3_2;
-    let (width, height) = (1400, 700);
+    let (width, height) = (400, 200);
     let mut window: PistonWindow =
         WindowSettings::new("ray", (width, height))
             .exit_on_esc(true)
@@ -82,22 +82,28 @@ fn main() {
             .build()
             .unwrap();
 
+    let scene = Scene {
+        objects: vec![
+            Object::Sphere(Sphere::new(Vector::new(0.0, 0.0, -1.0), 0.5)),
+            Object::Sphere(Sphere::new(Vector::new(0.0, -100.5, -1.0), 100.00))
+        ]
+    };
+
+    let mut buffer = vec![Rgb::new(0.0, 0.0, 0.0); (width * height) as usize];
+    render(width, height, &scene, &mut buffer);
+
     let mut canvas = ImageBuffer::new(width, height);
+    for (i, it) in buffer.iter().enumerate() {
+        let x = i as u32 % width;
+        let y = i as u32 / width;
+        canvas.put_pixel(x, y, image::Rgba([buffer[i].r as u8, buffer[i].g as u8, buffer[i].g as u8, 255]));
+    }
+
     let mut texture: G2dTexture = Texture::from_image(
         &mut window.factory,
         &canvas,
         &TextureSettings::new()
     ).unwrap();
-
-
-    let scene = Scene { objects: vec![
-        Object::Sphere(Sphere::new(Vector::new(0.0,0.0,-1.0), 0.5)),
-        Object::Sphere(Sphere::new(Vector::new(0.0,-100.5,-1.0), 100.00))
-    ]};
-
-    render(canvas.height(), canvas.width(), &scene,&mut |x, y, r, g, b| {
-        canvas.put_pixel(x, y, image::Rgba([r as u8, g as u8, b as u8, 255]));
-    });
 
     while let Some(e) = window.next() {
         if let Some(_) = e.render_args() {
