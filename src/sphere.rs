@@ -21,7 +21,7 @@ impl RayIntersect for Sphere {
     fn intersects(&self, ray: &Ray, bounds: (f32, f32)) -> Option<IntersectionResult> {
         let oc = ray.origin - self.center;
         let a = ray.direction.dot(&ray.direction);
-        let b = (oc.dot(&ray.direction));
+        let b = oc.dot(&ray.direction);
         let c = oc.dot(&oc) - self.radius*self.radius;
         let d = b*b - a*c;
 

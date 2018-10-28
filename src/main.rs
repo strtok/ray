@@ -133,7 +133,7 @@ fn main() {
     let image_buffer = render(width, height, scene);
 
     let mut canvas = ImageBuffer::new(width, height);
-    for (i, it) in image_buffer.iter().enumerate() {
+    for (i, _it) in image_buffer.iter().enumerate() {
         let x = i as u32 % width;
         let y = i as u32 / width;
         canvas.put_pixel(x, y, image::Rgba([image_buffer[i].r as u8, image_buffer[i].g as u8, image_buffer[i].g as u8, 255]));
