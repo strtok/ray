@@ -54,13 +54,17 @@ fn raycast(ray: &Ray, scene: &Scene) -> Rgb {
 
 fn render(width: u32, height: u32, scene: Arc<Scene>) -> Vec<Rgb>
 {
-    let nsamples = 100;
-    let camera = Arc::new(Camera::new());
-    let pool = ThreadPool::new(4);
+    const NTHREADS: usize = 4;
+    const NSAMPLES: usize = 100;
 
+    let camera = Arc::new(Camera::new());
+    let pool = ThreadPool::new(NTHREADS);
     let (tx, rx) = channel();
 
-    for _ in 0..nsamples {
+    // Distribute work to the thread pool. Each thread renders the
+    // full scene one by one, sending the rendered buffer back to
+    // the main thread to be merged into a final image.
+    for _ in 0..NSAMPLES {
         let tx = tx.clone();
         let scene = Arc::clone(&scene);
         let camera = Arc::clone(&camera);
@@ -84,21 +88,21 @@ fn render(width: u32, height: u32, scene: Arc<Scene>) -> Vec<Rgb>
         });
     }
 
+    // Average out the images produced by the worker threads to produce a final image
     let mut final_image = vec![Rgb::new(0.0, 0.0, 0.0); (width * height) as usize];
-    for _ in 0..nsamples {
+    for _ in 0..NSAMPLES {
         let image = rx.recv().unwrap();
         for (i, it) in image.iter().enumerate() {
             final_image[i] = &final_image[i] + it;
         }
     }
-
     for it in final_image.iter_mut() {
-        it.r = it.r / nsamples as f32;
-        it.g = it.g / nsamples as f32;
-        it.b = it.b / nsamples as f32;
+        it.r = it.r / NSAMPLES as f32;
+        it.g = it.g / NSAMPLES as f32;
+        it.b = it.b / NSAMPLES as f32;
     }
 
-    return final_image;
+    final_image
 }
 
 fn main() {
