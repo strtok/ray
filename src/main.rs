@@ -3,6 +3,7 @@ extern crate image;
 extern crate pretty_env_logger;
 extern crate core;
 extern crate rand;
+extern crate threadpool;
 
 #[macro_use] extern crate log;
 #[macro_use] extern crate approx;
@@ -24,6 +25,8 @@ use scene::*;
 use sphere::Sphere;
 use std::f32;
 use std::sync::Arc;
+use std::sync::mpsc::channel;
+use threadpool::ThreadPool;
 use vector::Vector;
 
 fn raycast(ray: &Ray, scene: &Scene) -> Rgb {
@@ -51,26 +54,51 @@ fn raycast(ray: &Ray, scene: &Scene) -> Rgb {
 
 fn render(width: u32, height: u32, scene: Arc<Scene>) -> Vec<Rgb>
 {
-    let mut buffer = vec![Rgb::new(0.0, 0.0, 0.0); (width * height) as usize];
-    let camera = Camera::new();
-    let nsamples = 25;
+    let nsamples = 100;
+    let camera = Arc::new(Camera::new());
+    let pool = ThreadPool::new(4);
 
-    for yp in 0..height {
-        for xp in 0..width {
-            let mut color = Rgb::new(0.0, 0.0, 0.0);
-            for sample in 0..nsamples {
-                let u = (xp as f32 + random::<f32>()) / width as f32;
-                let v = (yp as f32 + random::<f32>()) / height as f32;
-                let ray = camera.ray(u, v);
-                color = color + raycast(&ray, &scene);
+    let (tx, rx) = channel();
+
+    for _ in 0..nsamples {
+        let tx = tx.clone();
+        let scene = Arc::clone(&scene);
+        let camera = Arc::clone(&camera);
+
+        pool.execute(move|| {
+            let mut image = vec![Rgb::new(0.0, 0.0, 0.0); (width * height) as usize];
+            let mut rng = rand::thread_rng();
+
+            for yp in 0..height {
+                for xp in 0..width {
+                    let r1: f32 = rng.gen();
+                    let r2: f32 = rng.gen();
+                    let u = (xp as f32 + r1) / width as f32;
+                    let v = (yp as f32 + r2) / height as f32;
+                    let ray = camera.ray(u, v);
+                    let i = ((height - yp - 1) * width) + xp;
+                    image[i as usize] = raycast(&ray, &scene);
+                }
             }
-            color = color / nsamples as f32;
-            let i = ((height - yp - 1) * width) + xp;
-            buffer[i as usize] = color;
+            tx.send(image).unwrap();
+        });
+    }
+
+    let mut final_image = vec![Rgb::new(0.0, 0.0, 0.0); (width * height) as usize];
+    for _ in 0..nsamples {
+        let image = rx.recv().unwrap();
+        for (i, it) in image.iter().enumerate() {
+            final_image[i] = &final_image[i] + it;
         }
     }
 
-    buffer
+    for it in final_image.iter_mut() {
+        it.r = it.r / nsamples as f32;
+        it.g = it.g / nsamples as f32;
+        it.b = it.b / nsamples as f32;
+    }
+
+    return final_image;
 }
 
 fn main() {
@@ -93,13 +121,13 @@ fn main() {
         ]
     });
 
-    let buffer = render(width, height, scene);
+    let image_buffer = render(width, height, scene);
 
     let mut canvas = ImageBuffer::new(width, height);
-    for (i, it) in buffer.iter().enumerate() {
+    for (i, it) in image_buffer.iter().enumerate() {
         let x = i as u32 % width;
         let y = i as u32 / width;
-        canvas.put_pixel(x, y, image::Rgba([buffer[i].r as u8, buffer[i].g as u8, buffer[i].g as u8, 255]));
+        canvas.put_pixel(x, y, image::Rgba([image_buffer[i].r as u8, image_buffer[i].g as u8, image_buffer[i].g as u8, 255]));
     }
 
     let mut texture: G2dTexture = Texture::from_image(

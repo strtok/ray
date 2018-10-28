@@ -1,6 +1,7 @@
 use vector::Vector;
 use ray::Ray;
 
+#[derive(Clone)]
 pub struct Camera {
     origin: Vector,
     viewport_origin: Vector,

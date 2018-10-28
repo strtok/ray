@@ -34,6 +34,18 @@ impl Add for Rgb {
     }
 }
 
+impl<'a, 'b> Add<&'b Rgb> for &'a Rgb {
+    type Output = Rgb;
+
+    fn add(self, other: &'b Rgb) -> Rgb {
+        Rgb {
+            r: self.r + other.r,
+            g: self.g + other.g,
+            b: self.b + other.b
+        }
+    }
+}
+
 impl Add<f32> for Rgb {
     type Output = Rgb;
     fn add(self, other: f32) -> Rgb {
@@ -101,6 +113,18 @@ impl Div <f32>for Rgb {
             r: self.r / other,
             g: self.g / other,
             b: self.b / other
+        }
+    }
+}
+
+impl<'a> Add<f32> for &'a Rgb {
+    type Output = Rgb;
+
+    fn add(self, other: f32) -> Rgb {
+        Rgb {
+            r: self.r + other,
+            g: self.g + other,
+            b: self.b + other
         }
     }
 }
