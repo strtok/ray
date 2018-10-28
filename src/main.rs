@@ -52,6 +52,25 @@ fn raycast(ray: &Ray, scene: &Scene) -> Rgb {
     return Rgb::new(color.r.sqrt() * 255.0, color.g.sqrt() * 255.0, color.b.sqrt() * 255.0);
 }
 
+fn render_scene(width: u32, height: u32, camera: &Camera, scene: &Scene) -> Vec<Rgb>
+{
+    let mut image = vec![Rgb::new(0.0, 0.0, 0.0); (width * height) as usize];
+    let mut rng = rand::thread_rng();
+
+    for yp in 0..height {
+        for xp in 0..width {
+            let r1: f32 = rng.gen();
+            let r2: f32 = rng.gen();
+            let u = (xp as f32 + r1) / width as f32;
+            let v = (yp as f32 + r2) / height as f32;
+            let ray = camera.ray(u, v);
+            let i = ((height - yp - 1) * width) + xp;
+            image[i as usize] = raycast(&ray, &scene);
+        }
+    }
+    image
+}
+
 fn render(width: u32, height: u32, scene: Arc<Scene>) -> Vec<Rgb>
 {
     const NTHREADS: usize = 4;
@@ -70,21 +89,7 @@ fn render(width: u32, height: u32, scene: Arc<Scene>) -> Vec<Rgb>
         let camera = Arc::clone(&camera);
 
         pool.execute(move|| {
-            let mut image = vec![Rgb::new(0.0, 0.0, 0.0); (width * height) as usize];
-            let mut rng = rand::thread_rng();
-
-            for yp in 0..height {
-                for xp in 0..width {
-                    let r1: f32 = rng.gen();
-                    let r2: f32 = rng.gen();
-                    let u = (xp as f32 + r1) / width as f32;
-                    let v = (yp as f32 + r2) / height as f32;
-                    let ray = camera.ray(u, v);
-                    let i = ((height - yp - 1) * width) + xp;
-                    image[i as usize] = raycast(&ray, &scene);
-                }
-            }
-            tx.send(image).unwrap();
+            tx.send(render_scene(width, height, &camera, &scene)).unwrap();
         });
     }
 
