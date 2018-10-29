@@ -117,10 +117,10 @@ impl Div <f32>for Rgb {
     }
 }
 
-impl<'a> Add<f32> for &'a Rgb {
+impl<'a> Div<f32> for &'a Rgb {
     type Output = Rgb;
 
-    fn add(self, other: f32) -> Rgb {
+    fn div(self, other: f32) -> Rgb {
         Rgb {
             r: self.r + other,
             g: self.g + other,

@@ -87,8 +87,7 @@ fn render(width: u32, height: u32, scene: Arc<Scene>) -> Vec<Rgb>
         let tx = tx.clone();
         let scene = Arc::clone(&scene);
         let camera = Arc::clone(&camera);
-
-        pool.execute(move|| {
+        pool.execute(move || {
             tx.send(render_scene(width, height, &camera, &scene)).unwrap();
         });
     }
@@ -101,10 +100,9 @@ fn render(width: u32, height: u32, scene: Arc<Scene>) -> Vec<Rgb>
             final_image[i] = &final_image[i] + it;
         }
     }
+
     for it in final_image.iter_mut() {
-        it.r = it.r / NSAMPLES as f32;
-        it.g = it.g / NSAMPLES as f32;
-        it.b = it.b / NSAMPLES as f32;
+        *it = *it / (NSAMPLES as f32);
     }
 
     final_image
@@ -114,21 +112,21 @@ fn main() {
     pretty_env_logger::init();
     debug!("starting.");
 
-    let opengl = OpenGL::V3_2;
     let (width, height) = (400, 200);
-    let mut window: PistonWindow =
-        WindowSettings::new("ray", (width, height))
-            .exit_on_esc(true)
-            .opengl(opengl)
-            .build()
-            .unwrap();
-
     let scene = Arc::new(Scene {
         objects: vec![
             Object::Sphere(Sphere::new(Vector::new(0.0, 0.0, -1.0), 0.5)),
             Object::Sphere(Sphere::new(Vector::new(0.0, -100.5, -1.0), 100.00))
         ]
     });
+
+    let opengl = OpenGL::V3_2;
+    let mut window: PistonWindow =
+        WindowSettings::new("ray", (width, height))
+            .exit_on_esc(true)
+            .opengl(opengl)
+            .build()
+            .unwrap();
 
     let image_buffer = render(width, height, scene);
 
