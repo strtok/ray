@@ -29,7 +29,7 @@ use std::sync::mpsc::channel;
 use threadpool::ThreadPool;
 use vector::Vector;
 
-fn raycast(ray: &Ray, scene: &Scene) -> Rgb {
+fn raytrace(ray: &Ray, scene: &Scene) -> Rgb {
     let bounds = (0.001, f32::MAX);
 
     // Intersection with closest object
@@ -43,7 +43,7 @@ fn raycast(ray: &Ray, scene: &Scene) -> Rgb {
         r1.t.partial_cmp(&r2.t).unwrap()
     }) {
         let target = intersection.point + intersection.normal + Vector::random_unit();
-        return raycast(&Ray::new(intersection.point, target-intersection.point), scene) * 0.5;
+        return raytrace(&Ray::new(intersection.point, target-intersection.point), scene) * 0.5;
     }
 
     // Otherwise background color
@@ -65,7 +65,7 @@ fn render_scene(width: u32, height: u32, camera: &Camera, scene: &Scene) -> Vec<
             let v = (yp as f32 + r2) / height as f32;
             let ray = camera.ray(u, v);
             let i = ((height - yp - 1) * width) + xp;
-            image[i as usize] = raycast(&ray, &scene);
+            image[i as usize] = raytrace(&ray, &scene);
         }
     }
     image
