@@ -124,7 +124,7 @@ fn main() {
     let mut window: PistonWindow =
         WindowSettings::new("ray", (width, height))
             .exit_on_esc(true)
-            .opengl(opengl)
+            .graphics_api(opengl)
             .build()
             .unwrap();
 
@@ -137,16 +137,18 @@ fn main() {
         canvas.put_pixel(x, y, image::Rgba([image_buffer[i].r as u8, image_buffer[i].g as u8, image_buffer[i].g as u8, 255]));
     }
 
+    let mut texture_context = window.create_texture_context();
+
     let mut texture: G2dTexture = Texture::from_image(
-        &mut window.factory,
+        &mut texture_context,
         &canvas,
         &TextureSettings::new()
     ).unwrap();
 
     while let Some(e) = window.next() {
         if let Some(_) = e.render_args() {
-            texture.update(&mut window.encoder, &canvas).unwrap();
-            window.draw_2d(&e, |c, g| {
+            texture.update(&mut texture_context, &canvas).unwrap();
+            window.draw_2d(&e, |c, g, _| {
                 clear([1.0; 4], g);
                 image(&texture, c.transform, g);
             });
